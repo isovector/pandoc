@@ -406,7 +406,7 @@ blockToLaTeX (CodeBlock (identifier,classes,keyvalAttr) str) = do
                       then empty
                       else linkAnchor' <> "%"
   let lagdaCodeBlock = do
-        return $ flush (linkAnchor $$ "\\begin{code}" $$ literal str $$
+        return $ flush (linkAnchor $$ "\\begin{code}[indent=" <> literal (T.pack $ show $ length $ takeWhile (== ' ') $ T.unpack $ head $ T.lines str) <> "]" $$ literal str $$
                             "\\end{code}") $$ cr
   let lhsCodeBlock = do
         modify $ \s -> s{ stLHS = True }
