@@ -406,8 +406,16 @@ blockToLaTeX (CodeBlock (identifier,classes,keyvalAttr) str) = do
                       then empty
                       else linkAnchor' <> "%"
   let lagdaCodeBlock = do
-        return $ flush (linkAnchor $$ "\\begin{code}[indent=" <> literal (T.pack $ show $ length $ takeWhile (== ' ') $ T.unpack $ head $ T.lines str) <> "]" $$ literal str $$
-                            "\\end{code}") $$ cr
+        let indent_of = length . takeWhile (== ' ')
+            ls = T.lines str
+        return $ flush (linkAnchor $$
+          mconcat
+            [ "\\begin{code}[indent="
+            , literal $ T.pack $ show $ indent_of $ T.unpack $ head ls
+            , ", endindent="
+            , literal $ T.pack $ show $ indent_of $ T.unpack $ last ls
+            , "]"
+            ] $$ literal str $$ "\\end{code}") $$ cr
   let lhsCodeBlock = do
         modify $ \s -> s{ stLHS = True }
         return $ flush (linkAnchor $$ "\\begin{code}" $$ literal str $$
